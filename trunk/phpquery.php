@@ -152,7 +152,7 @@ public function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $db
 
 }
 
-public function fetch ( $fields , $table , $options = NULL , $return = 'dynamic' ) {
+public function fetch ( $fields , $table , $options = NULL , $res_type = MYSQL_BOTH , $return = 'dynamic' ) {
 
 	if ( is_string ( $fields ) ) {
 
@@ -188,7 +188,7 @@ public function fetch ( $fields , $table , $options = NULL , $return = 'dynamic'
 	}
 
 	$rows = array();
-	while ( $row = mysql_fetch_array( $res ) ) {
+	while ( $row = mysql_fetch_array( $res , $res_type ) ) {
 		$rows[] = $row;
 	}
 
