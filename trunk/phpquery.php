@@ -24,7 +24,7 @@ break;
 
 }
 
-public static function prepare_mysql_data ( $data , $return = 'dynamic' ) {
+public static function prepare_data ( $data , $return = 'dynamic' ) {
 
 	if ( is_string ( $data ) ) {
 	
@@ -61,7 +61,7 @@ public static function run ( $query , $data , $return = 'dynamic' ) {
 		
 		}
 
-		$data = phpquery::prepare_mysql_data ( $data , 'array' );
+		$data = phpquery::prepare_data ( $data , 'array' );
 
 		if ( $data [ 'successful' ] === false ) {
 			return phpquery::return_data ( $data , $return );
@@ -108,11 +108,11 @@ public static function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NUL
 
 	if ( is_array ( $dbhost ) ) {
 
-		$data = phpquery::prepare_mysql_data ( $dbhost );
+		$data = phpquery::prepare_data ( $dbhost );
 
 	}else if ( isset ( $dbhost ) && isset ( $dbuser ) && isset ( $dbpass ) ) {
 
-		$data = phpquery::prepare_mysql_data ( array ( $dbhost , $dbuser , $dbpass , $dbname ) );
+		$data = phpquery::prepare_data ( array ( $dbhost , $dbuser , $dbpass , $dbname ) );
 
 	}else {
 
@@ -174,7 +174,7 @@ public static function fetch ( $fields , $table , $options = NULL , $res_type = 
 
 	}
 
-	$fields = phpquery::prepare_mysql_data ( $fields , $return );
+	$fields = phpquery::prepare_data ( $fields , $return );
 	$fields = implode ( ' , ' , $fields [ 'data' ] );
 
 	$table = implode ( '' , $table );
