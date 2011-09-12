@@ -89,8 +89,54 @@ public function run ( $query , $data , $return = 'dynamic' ) {
 	}
 
 	return $this -> return_data ( $r , $return );
+}
 
-	return mysql_query( $query ) or die( mysql_error() );
+public function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $dbname = NULL , $return = 'dynamic' ) {
+
+	if ( is_array ( $dbhost ) ) {
+
+		$data = prepare_mysql_data ( $dbhost );
+
+	}else if ( is_set ( $dbhost ) && is_set ( $dbuser ) && is_set ( $dbpass ) ) {
+
+		$data = prepare_mysql_data ( array ( $dbhost , $dbuser , $dbpass , $dbname ) );
+
+	}else {
+
+		return return_data ( array ( 'successful' => false , 'error' => 'Not acceptable or incomplete data.' ) , $return ) ;
+
+	}
+
+	$assoc [ 0 ] = 'dbhost' ;
+	$assoc [ 1 ] = 'dbuser' ;
+	$assoc [ 2 ] = 'dbpass' ;
+	$assoc [ 3 ] = 'dbname' ;
+
+	$i = 0;
+
+	while ( $assoc [ $i ] ) {
+		if ( !is_set ( $data [ $i ] ) ) {
+			$data [ $i ] = $data [ $assoc [ $i ] ];
+		}
+		$i++;
+	}
+
+	if ( !mysql_connect ( $data [ 0 ] , $data [ 1 ] , $data [ 2 ] ) ) {
+
+		return return_value ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
+		
+	}
+
+	if ( is_set ( $data [ 3 ] ) ) {
+
+		if ( !mysql_select_db ( $data [ 3 ] ) ) {
+			return return_value ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
+		}
+
+	}
+
+	return return_value ( array ( 'successful' => true ) , $return );
+
 }
 
 }
