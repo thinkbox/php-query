@@ -1,7 +1,7 @@
 <?php
 class phpquery {
 
-private function return_data ( $data , $type ) {
+private function return_data ( $data , $type = 'dynamic' ) {
 
 switch ( $type ) {
 
@@ -43,7 +43,7 @@ public function prepare_mysql_data ( $data , $return = 'dynamic' ) {
 		$i++;
 	}
 	
-	return $this -> return_data ( array ( 'successful' => true , 'data' => $data ) );
+	return $this -> return_data ( array ( 'successful' => true , 'data' => $data ) , $return );
 
 }
 
@@ -95,15 +95,15 @@ public function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $db
 
 	if ( is_array ( $dbhost ) ) {
 
-		$data = prepare_mysql_data ( $dbhost );
+		$data = $this -> prepare_mysql_data ( $dbhost );
 
-	}else if ( is_set ( $dbhost ) && is_set ( $dbuser ) && is_set ( $dbpass ) ) {
+	}else if ( isset ( $dbhost ) && isset ( $dbuser ) && isset ( $dbpass ) ) {
 
-		$data = prepare_mysql_data ( array ( $dbhost , $dbuser , $dbpass , $dbname ) );
+		$data = $this -> prepare_mysql_data ( array ( $dbhost , $dbuser , $dbpass , $dbname ) );
 
 	}else {
 
-		return return_data ( array ( 'successful' => false , 'error' => 'Not acceptable or incomplete data.' ) , $return ) ;
+		return $this -> return_data ( array ( 'successful' => false , 'error' => 'Not acceptable or incomplete data.' ) , $return ) ;
 
 	}
 
@@ -115,7 +115,7 @@ public function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $db
 	$i = 0;
 
 	while ( $assoc [ $i ] ) {
-		if ( !is_set ( $data [ $i ] ) ) {
+		if ( !isset ( $data [ $i ] ) ) {
 			$data [ $i ] = $data [ $assoc [ $i ] ];
 		}
 		$i++;
@@ -123,19 +123,19 @@ public function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $db
 
 	if ( !mysql_connect ( $data [ 0 ] , $data [ 1 ] , $data [ 2 ] ) ) {
 
-		return return_value ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
+		return $this -> return_data ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
 		
 	}
 
-	if ( is_set ( $data [ 3 ] ) ) {
+	if ( isset ( $data [ 3 ] ) ) {
 
 		if ( !mysql_select_db ( $data [ 3 ] ) ) {
-			return return_value ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
+			return $this -> return_data ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
 		}
 
 	}
 
-	return return_value ( array ( 'successful' => true ) , $return );
+	return $this -> return_data ( array ( 'successful' => true ) , $return );
 
 }
 
