@@ -49,29 +49,43 @@ public function prepare_mysql_data ( $data , $return = 'dynamic' ) {
 
 public function run ( $query , $data , $return = 'dynamic' ) {
 
-	$data = $this -> prepare_mysql_data ( $data , 'array' );
+	if ( isset ( $data ) ) {
 
-	if ( $data [ 'successful' ] === false ) {
-		return $this -> return_data ( $data , $return );
-	}
+		if ( is_string ( $data ) ) {
+		
+			$data = explode ( ',' , $data );
+			
+		}else if ( !is_array ( $data ) ) {
 
-	$parts = explode( '?' , $query );
+			return $this -> return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type.' ) , $return );
+		
+		}
 
-	$query = '';
+		$data = $this -> prepare_mysql_data ( $data , 'array' );
 
-	foreach ( $data as $value ) {
+		if ( $data [ 'successful' ] === false ) {
+			return $this -> return_data ( $data , $return );
+		}
 
+		$data = $data [ 'data' ];
+
+		$parts = explode( '?' , $query );
+
+		$query = '';
+
+		foreach ( $data as $value ) {
+
+			$query .= array_shift( $parts );
+
+			$query .= $value;
+
+		}
+	
 		$query .= array_shift( $parts );
 
-		$query .= $value;
-
 	}
-	
-	$query .= array_shift( $parts );
 
 	$res = mysql_query ( $query );
-
-	$r = array ();
 
 	if ( is_resource ( $res ) ) {
 
@@ -79,7 +93,6 @@ public function run ( $query , $data , $return = 'dynamic' ) {
 		$r [ 'data' ] = $res;
 
 	}else {
-
 		$r [ 'successful' ] = $res;
 
 		if ( $res === false ) {
@@ -137,6 +150,50 @@ public function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $db
 
 	return $this -> return_data ( array ( 'successful' => true ) , $return );
 
+}
+
+public function fetch ( $fields , $table , $options = NULL , $return = 'dynamic' ) {
+
+	if ( is_string ( $fields ) ) {
+
+		$fields = explode( ',' , $fields );
+
+	}else if ( !is_array ( $fields ) ) {
+	
+		return $this -> return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type for \'fields\'.' ) );
+
+	}
+
+	if ( is_string ( $table ) ) {
+
+		$table = array ( $table );
+		
+	}else if ( !is_array ( $table ) ) {
+
+		return $this -> return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type for \'table\'.' ) );
+
+	}
+
+	$fields = $this -> prepare_mysql_data ( $fields , $return );
+	$fields = implode ( ' , ' , $fields [ 'data' ] );
+
+	$table = implode ( '' , $table );
+
+	$query = "SELECT $fields FROM $table $options;";
+
+	$res = mysql_query ( $query );
+
+	if ( !is_resource ( $res ) ) {
+		return $this -> return_data ( array ( 'successful' => false , 'data' => $query , 'error' => mysql_error () ) , $return );
+	}
+
+	$rows = array();
+	while ( $row = mysql_fetch_array( $res ) ) {
+		$rows[] = $row;
+	}
+
+	return $this -> return_data ( array ( 'successful' => true , 'data' => $rows ) );
+	
 }
 
 }
