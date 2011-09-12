@@ -1,7 +1,7 @@
 <?php
 class phpquery {
 
-private function return_data ( $data , $type = 'dynamic' ) {
+private static function return_data ( $data , $type = 'dynamic' ) {
 
 switch ( $type ) {
 
@@ -24,7 +24,7 @@ break;
 
 }
 
-public function prepare_mysql_data ( $data , $return = 'dynamic' ) {
+public static function prepare_mysql_data ( $data , $return = 'dynamic' ) {
 
 	if ( is_string ( $data ) ) {
 	
@@ -32,7 +32,7 @@ public function prepare_mysql_data ( $data , $return = 'dynamic' ) {
 
 	}else if ( !is_array ( $data ) ) {
 	
-		return $this -> return_data ( array ( 'successful' => false , 'error' => 'Inacceptible Data Type' ) , $return  ) ;
+		return phpquery::return_data ( array ( 'successful' => false , 'error' => 'Inacceptible Data Type' ) , $return  ) ;
 
 	}
 
@@ -43,11 +43,11 @@ public function prepare_mysql_data ( $data , $return = 'dynamic' ) {
 		$i++;
 	}
 	
-	return $this -> return_data ( array ( 'successful' => true , 'data' => $data ) , $return );
+	return phpquery::return_data ( array ( 'successful' => true , 'data' => $data ) , $return );
 
 }
 
-public function run ( $query , $data , $return = 'dynamic' ) {
+public static function run ( $query , $data , $return = 'dynamic' ) {
 
 	if ( isset ( $data ) ) {
 
@@ -57,14 +57,14 @@ public function run ( $query , $data , $return = 'dynamic' ) {
 			
 		}else if ( !is_array ( $data ) ) {
 
-			return $this -> return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type.' ) , $return );
+			return phpquery::return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type.' ) , $return );
 		
 		}
 
-		$data = $this -> prepare_mysql_data ( $data , 'array' );
+		$data = phpquery::prepare_mysql_data ( $data , 'array' );
 
 		if ( $data [ 'successful' ] === false ) {
-			return $this -> return_data ( $data , $return );
+			return phpquery::return_data ( $data , $return );
 		}
 
 		$data = $data [ 'data' ];
@@ -101,22 +101,22 @@ public function run ( $query , $data , $return = 'dynamic' ) {
 
 	}
 
-	return $this -> return_data ( $r , $return );
+	return phpquery::return_data ( $r , $return );
 }
 
-public function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $dbname = NULL , $return = 'dynamic' ) {
+public static function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $dbname = NULL , $return = 'dynamic' ) {
 
 	if ( is_array ( $dbhost ) ) {
 
-		$data = $this -> prepare_mysql_data ( $dbhost );
+		$data = phpquery::prepare_mysql_data ( $dbhost );
 
 	}else if ( isset ( $dbhost ) && isset ( $dbuser ) && isset ( $dbpass ) ) {
 
-		$data = $this -> prepare_mysql_data ( array ( $dbhost , $dbuser , $dbpass , $dbname ) );
+		$data = phpquery::prepare_mysql_data ( array ( $dbhost , $dbuser , $dbpass , $dbname ) );
 
 	}else {
 
-		return $this -> return_data ( array ( 'successful' => false , 'error' => 'Not acceptable or incomplete data.' ) , $return ) ;
+		return phpquery::return_data ( array ( 'successful' => false , 'error' => 'Not acceptable or incomplete data.' ) , $return ) ;
 
 	}
 
@@ -136,23 +136,23 @@ public function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $db
 
 	if ( !mysql_connect ( $data [ 0 ] , $data [ 1 ] , $data [ 2 ] ) ) {
 
-		return $this -> return_data ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
+		return phpquery::return_data ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
 		
 	}
 
 	if ( isset ( $data [ 3 ] ) ) {
 
 		if ( !mysql_select_db ( $data [ 3 ] ) ) {
-			return $this -> return_data ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
+			return phpquery::return_data ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
 		}
 
 	}
 
-	return $this -> return_data ( array ( 'successful' => true ) , $return );
+	return phpquery::return_data ( array ( 'successful' => true ) , $return );
 
 }
 
-public function fetch ( $fields , $table , $options = NULL , $res_type = MYSQL_BOTH , $return = 'dynamic' ) {
+public static function fetch ( $fields , $table , $options = NULL , $res_type = MYSQL_BOTH , $return = 'dynamic' ) {
 
 	if ( is_string ( $fields ) ) {
 
@@ -160,7 +160,7 @@ public function fetch ( $fields , $table , $options = NULL , $res_type = MYSQL_B
 
 	}else if ( !is_array ( $fields ) ) {
 	
-		return $this -> return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type for \'fields\'.' ) );
+		return phpquery::return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type for \'fields\'.' ) );
 
 	}
 
@@ -170,11 +170,11 @@ public function fetch ( $fields , $table , $options = NULL , $res_type = MYSQL_B
 		
 	}else if ( !is_array ( $table ) ) {
 
-		return $this -> return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type for \'table\'.' ) );
+		return phpquery::return_data ( array ( 'successful' => false , 'error' => 'Not acceptable data type for \'table\'.' ) );
 
 	}
 
-	$fields = $this -> prepare_mysql_data ( $fields , $return );
+	$fields = phpquery::prepare_mysql_data ( $fields , $return );
 	$fields = implode ( ' , ' , $fields [ 'data' ] );
 
 	$table = implode ( '' , $table );
@@ -184,7 +184,7 @@ public function fetch ( $fields , $table , $options = NULL , $res_type = MYSQL_B
 	$res = mysql_query ( $query );
 
 	if ( !is_resource ( $res ) ) {
-		return $this -> return_data ( array ( 'successful' => false , 'data' => $query , 'error' => mysql_error () ) , $return );
+		return phpquery::return_data ( array ( 'successful' => false , 'data' => $query , 'error' => mysql_error () ) , $return );
 	}
 
 	$rows = array();
@@ -192,7 +192,7 @@ public function fetch ( $fields , $table , $options = NULL , $res_type = MYSQL_B
 		$rows[] = $row;
 	}
 
-	return $this -> return_data ( array ( 'successful' => true , 'data' => $rows ) );
+	return phpquery::return_data ( array ( 'successful' => true , 'data' => $rows ) );
 	
 }
 
