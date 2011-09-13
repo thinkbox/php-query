@@ -104,7 +104,7 @@ public static function run ( $query , $data , $return = 'dynamic' ) {
 	return phpquery::return_data ( $r , $return );
 }
 
-public static function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NULL , $dbname = NULL , $return = 'dynamic' ) {
+public static function connect ( $dbhost = 'localhost' , $dbuser = 'root' , $dbpass = '' , $peristent = false , $dbname = NULL , $return = 'dynamic' ) {
 
 	if ( is_array ( $dbhost ) ) {
 
@@ -112,7 +112,7 @@ public static function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NUL
 
 	}else if ( isset ( $dbhost ) && isset ( $dbuser ) && isset ( $dbpass ) ) {
 
-		$data = phpquery::prepare_data ( array ( $dbhost , $dbuser , $dbpass , $dbname ) );
+		$data = phpquery::prepare_data ( array ( $dbhost , $dbuser , $dbpass , $persistent , $dbname ) );
 
 	}else {
 
@@ -123,7 +123,8 @@ public static function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NUL
 	$assoc [ 0 ] = 'dbhost' ;
 	$assoc [ 1 ] = 'dbuser' ;
 	$assoc [ 2 ] = 'dbpass' ;
-	$assoc [ 3 ] = 'dbname' ;
+	$assoc [ 3 ] = 'persistent' ;
+	$assoc [ 4 ] = 'dbname' ;
 
 	$i = 0;
 
@@ -134,15 +135,25 @@ public static function connect ( $dbhost = NULL , $dbuser = NULL , $dbpass = NUL
 		$i++;
 	}
 
-	if ( !mysql_connect ( $data [ 0 ] , $data [ 1 ] , $data [ 2 ] ) ) {
+	if ( ( $data [ 3 ] === true ) || ( $data [ 3 ] === 'persistent' ) ) {
+
+		$link = mysql_pconnect ( $data [ 0 ] , $data [ 1 ] , $data [ 2 ] ) ;
+	
+	}else{
+		$link = mysql_connect ( $data [ 0 ] , $data [ 1 ] , $data [ 2 ] ) ;
+	
+	}
+
+
+	if ( !$link ) {
 
 		return phpquery::return_data ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
 		
 	}
 
-	if ( isset ( $data [ 3 ] ) ) {
+	if ( isset ( $data [ 4 ] ) ) {
 
-		if ( !mysql_select_db ( $data [ 3 ] ) ) {
+		if ( !mysql_select_db ( $data [ 4 ] ) ) {
 			return phpquery::return_data ( array ( 'successful' => false , 'error' => mysql_error () ) , $return );
 		}
 
@@ -175,6 +186,7 @@ public static function fetch ( $fields , $table , $options = NULL , $res_type = 
 	}
 
 	$fields = phpquery::prepare_data ( $fields , $return );
+	
 	$fields = implode ( ' , ' , $fields [ 'data' ] );
 
 	$table = implode ( '' , $table );
