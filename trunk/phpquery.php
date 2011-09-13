@@ -202,7 +202,7 @@ public static function disconnect ( $return = 'dynamic' ) {
 	if ( $close == false ) {
 		$error = mysql_error ();
 	}
-	return phpquery::return_data ( array ( 'successful' => $close , 'error' => $error , $return ) );
+	return phpquery::return_data ( array ( 'successful' => $close , 'error' => $error ) , $return );
 }
 
 }
