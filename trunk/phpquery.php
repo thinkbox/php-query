@@ -196,5 +196,14 @@ public static function fetch ( $fields , $table , $options = NULL , $res_type = 
 	
 }
 
+public static function disconnect ( $return = 'dynamic' ) {
+	$close = mysql_close ();
+	$error = null;
+	if ( $close == false ) {
+		$error = mysql_error ();
+	}
+	return phpquery::return_data ( array ( 'successful' => $close , 'error' => $error ) );
+}
+
 }
 ?>
