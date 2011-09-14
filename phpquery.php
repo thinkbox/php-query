@@ -163,11 +163,19 @@ public static function connect ( $dbhost = 'localhost' , $dbuser = 'root' , $dbp
 
 }
 
-public static function fetch ( $fields , $table , $options = NULL , $res_type = MYSQL_BOTH , $return = 'dynamic' ) {
+public static function fetch ( $fields = '' , $table = '' , $options = NULL , $res_type = MYSQL_BOTH , $return = 'dynamic' ) {
 
 	if ( is_string ( $fields ) ) {
 
-		$fields = explode( ',' , $fields );
+		if ( strpos ( $fields , ',' ) != false ) {
+
+			$fields = array ( $fields );
+		
+		}else{
+
+			$fields = explode( ',' , $fields );
+
+		}
 
 	}else if ( !is_array ( $fields ) ) {
 	
