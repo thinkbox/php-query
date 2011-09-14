@@ -24,7 +24,7 @@ break;
 
 }
 
-public static function prepare_data ( $data , $return = 'dynamic' ) {
+public static function prepare_data ( $data = '' , $return = 'dynamic' ) {
 
 	if ( is_string ( $data ) ) {
 	
