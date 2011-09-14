@@ -3,21 +3,26 @@ class phpquery {
 
 private static function return_data ( $data , $type = 'dynamic' ) {
 
+$return = array ( 'successful' => $data [ 'successful' ] , 'data' => $data [ 'data' ] , 'error' => $data [ 'error' ] );
+
 switch ( $type ) {
 
 case 'dynamic':
 
-	if ( $data [ 'successful' ] === false ) {
+	if ( $return [ 'successful' ] === false ) {
 		return false;
 	}else{
-		return $data [ 'data' ];
+		return $return [ 'data' ];
 	}
 
 break;
 case 'array':
 
-	return array ( 'successful' => $data [ 'successful' ] , 'data' => $data [ 'data' ] , 'error' => $data [ 'error' ] );
+	return $return;
 
+break;
+case 'json':
+	return json_encode ( $return );
 break;
 
 }
