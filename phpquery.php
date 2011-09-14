@@ -209,7 +209,13 @@ public static function fetch ( $fields , $table , $options = NULL , $res_type = 
 }
 
 public static function disconnect ( $link = null , $return = 'dynamic' ) {
-	$close = mysql_close ( $link );
+
+	if ( isset ( $link ) ) {
+		$close = mysql_close ( $link );
+	}else{
+		$close = mysql_close ();
+	}
+
 	$error = null;
 	if ( $close == false ) {
 		$error = mysql_error ();
