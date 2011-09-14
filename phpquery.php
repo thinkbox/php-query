@@ -47,7 +47,7 @@ public static function prepare_data ( $data , $return = 'dynamic' ) {
 
 }
 
-public static function run ( $query , $data , $return = 'dynamic' ) {
+public static function run ( $query = '' , $data = '' , $return = 'dynamic' ) {
 
 	if ( isset ( $data ) ) {
 
@@ -208,8 +208,8 @@ public static function fetch ( $fields , $table , $options = NULL , $res_type = 
 	
 }
 
-public static function disconnect ( $return = 'dynamic' ) {
-	$close = mysql_close ();
+public static function disconnect ( $link = null , $return = 'dynamic' ) {
+	$close = mysql_close ( $link );
 	$error = null;
 	if ( $close == false ) {
 		$error = mysql_error ();
