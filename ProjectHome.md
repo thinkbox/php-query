@@ -1,0 +1,1 @@
+PHPQuery is a library that aims to make MySQL Query manipulation on PHP easy as 1-2-3 and really safe.
